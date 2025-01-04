@@ -73,5 +73,16 @@ in {
     xdg.configFile."XD/torrents.ini" = mkIf (cfg.settings != {}) {
       source = iniFormat.generate "torrents.ini" cfg.settings;
     };
+
+    systemd.user.services.XD = {
+      Unit = { Description = "XD"; };
+
+      Install = { WantedBy = [ "graphical-session.target" ]; };
+
+      Service = {
+        Restart = "on-failure";
+        ExecStart = "${cfg.package}/bin/XD ${config.xdg.configHome}/XD/torrents.ini";
+      };
+    };
   };
 }
